@@ -26,7 +26,7 @@ export const useColorStore = defineStore('colorStore', {
         async fetchColor(id) {
             this.loading = true
             try {
-                const response = await axios.get(`/api/v1/colors/${id}`)
+                const response = await axios.get(`http://localhost:8080/api/v1/colors/${id}`)
                 this.color = response.data
             } catch (error) {
                 this.error = error
@@ -34,10 +34,15 @@ export const useColorStore = defineStore('colorStore', {
                 this.loading = false
             }
         },
-        async createColor(color) {
+        async addColor(color, price) {
             this.loading = true
             try {
-                await axios.post('/api/v1/colors', color)
+                await axios.post('http://localhost:8080/api/v1/colors', {color, price}, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*',
+                    }
+                })
             } catch (error) {
                 this.error = error
             } finally {
@@ -47,7 +52,7 @@ export const useColorStore = defineStore('colorStore', {
         async updateColor(color) {
             this.loading = true
             try {
-                await axios.put(`/api/v1/colors/${color.id}`, color)
+                await axios.put(`http://localhost:8080/api/v1/colors/${color.id}`, color)
             } catch (error) {
                 this.error = error
             } finally {
@@ -57,7 +62,7 @@ export const useColorStore = defineStore('colorStore', {
         async deleteColor(id) {
             this.loading = true
             try {
-                await axios.delete(`/api/v1/colors/${id}`)
+                await axios.delete(`/http://localhost:8080/api/v1/colors/${id}`)
             } catch (error) {
                 this.error = error
             } finally {

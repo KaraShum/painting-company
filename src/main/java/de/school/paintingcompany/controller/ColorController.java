@@ -2,12 +2,13 @@ package de.school.paintingcompany.controller;
 
 import de.school.paintingcompany.entities.Color;
 import de.school.paintingcompany.entities.ColorRepository;
+import de.school.paintingcompany.services.Calculator;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins ="http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/api/v1")
 public class ColorController {
 
@@ -41,5 +42,4 @@ public class ColorController {
     public void delete(@PathVariable Long id) {
         colorRepository.deleteById(id);
     }
-
 }

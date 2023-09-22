@@ -14,13 +14,15 @@ public class Color {
     private Long id;
 
     private String color;
+    private String name;
     private double price;
 
     public Color() {
     }
 
-    public Color(String color, double price) {
+    public Color(String color, String name, double price) {
         this.color = color;
+        this.name = name;
         this.price = price;
     }
 
@@ -34,6 +36,18 @@ public class Color {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public double getPrice() {

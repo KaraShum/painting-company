@@ -7,7 +7,7 @@ const router = createRouter({
         {
             path: '/',
             name: 'home',
-            component: HomeView
+            component: () => import('../views/HomeView.vue')
         },
         {
             path: '/login',
@@ -23,6 +23,12 @@ const router = createRouter({
             path: '/shop',
             name: 'shop',
             component: () => import('../components/ShopPage.vue')
+        },
+        {
+            // catch all other routes
+            path: '/:pathMatch(.*)*',
+            name: 'PageNotFound',
+            component: () => import('../components/PageNotFound.vue')
         }
     ]
 })

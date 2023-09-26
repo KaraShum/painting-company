@@ -9,7 +9,9 @@ export const useColorStore = defineStore('colorStore', {
         error: null
     }),
     getters: {
-        getColors: state => state.colors,
+        getAll: state => state.colors,
+        getColorById: state => id => state.colors.find(color => color.id === id),
+        getPrice: state => state.color.price,
     },
     actions: {
         async fetchColors() {

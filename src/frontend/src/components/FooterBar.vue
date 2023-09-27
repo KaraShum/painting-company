@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <footer class="bg-white align-bottom bg-transparent flex">
+  <footer class="align-bottom bg-transparent flex">
     <div class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between">
       <span class="text-sm text-gray-500 sm:text-center">© 2023 All Rights Reserved.
     </span>

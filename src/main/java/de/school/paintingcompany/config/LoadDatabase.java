@@ -18,15 +18,10 @@ public class LoadDatabase {
     @Bean
     CommandLineRunner initDatabase(ColorRepository colorRepository, WallpaperRepository wallpaperRepository) {
         return args -> {
-            log.info("Preloading " + colorRepository.save(new Color("#0062ff", "Blau", 4.50)));
-            log.info("Preloading " + colorRepository.save(new Color("#00ff15", "Grün", 3.35)));
-            log.info("Preloading " + colorRepository.save(new Color("#ff0022", "Rot", 2.50)));
-            log.info("Preloading " + colorRepository.save(new Color("#ffa200", "Orange", 3.75)));
-            log.info("Preloading " + colorRepository.save(new Color("#00fffb", "Türkis", 4.00)));
-            log.info("Preloading " + colorRepository.save(new Color("#ff00ee", "Pink", 1.99)));
-            log.info("Preloading " + wallpaperRepository.save(new Wallpaper("wallaper1", 5, 6, 2.30, true)));
-            log.info("Preloading " + wallpaperRepository.save(new Wallpaper("wallpaper2", 3, 4, 1.50, false)));
-            log.info("Preloading " + wallpaperRepository.save(new Wallpaper("wallpaper3", 2, 3, 1.00, true)));
+            log.info("Preloading " + colorRepository.save(new Color("#730c63","Purpur", 12, 2.5, 30)));
+            log.info("Preloading " + colorRepository.save(new Color("#FFFFFF", "Weiß", 25, 12, 60)));
+            log.info("Preloading " + wallpaperRepository.save(new Wallpaper("Raufaser Vlies", "Weiß", 18.75, 0.53, 0, 4)));
+            log.info("Preloading " + wallpaperRepository.save(new Wallpaper("Blumenmuster", "Grün", 3, 4, 0.64, 9)));
         };
     }
 }

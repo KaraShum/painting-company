@@ -8,13 +8,13 @@ onMounted(() => {
   wallpaperStore.fetchWallpapers();
 })
 const wallpapers = wallpaperStore.wallpapers;
-console.log(wallpapers);
+
 </script>
 
 <template>
 <div>
   <select>
-    <option v-for="wallpaper in wallpapers" :key="wallpaper.id" :value="wallpaper.id">{{ wallpaper.name }}</option>
+    <option v-for="wallpaper in wallpapers" :key="wallpaper.id" :value="wallpaper.id">{{ wallpaper.name }} ({{ wallpaper.price }}€)</option>
   </select>
 </div>
 </template>

@@ -23,8 +23,8 @@ function lanesPerRoll(wallpaperLength, laneLength) {
     return Math.floor(wallpaperLength / laneLength);
 }
 
-function calcWallpaperRolls(wallwidth, wallHeight, wallpaperLength, wallpaperWidth, rapport) {
-    const lanes = calcLanes(wallpaperWidth, wallwidth);
+function calcWallpaperRolls(wallWidth, wallHeight, wallpaperLength, wallpaperWidth, rapport) {
+    const lanes = calcLanes(wallpaperWidth, wallWidth);
     let laneLength;
     let lPR;
     if (rapport > 0) {
@@ -40,4 +40,4 @@ function calcPrice(count, price) {
     return count * price;
 }
 
-export { calcArea, calcLanes, calcLangeLength, lanesPerRoll, calcWallpaperRolls };
+export { calcArea, calcTotalArea, calcPaintBuckets, calcLanes, calcLangeLength, lanesPerRoll, calcWallpaperRolls, calcPrice };

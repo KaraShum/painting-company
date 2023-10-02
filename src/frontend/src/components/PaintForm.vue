@@ -14,7 +14,7 @@ const colors = colorStore.colors;
 <template>
 <div>
   <select>
-    <option v-for="color in colors" :key="color.id" :value="color.id">{{ color.name }}</option>
+    <option v-for="color in colors" :key="color.id" :value="color.id">{{ color.name }} ({{ color.price }}€)</option>
   </select>
 </div>
 </template>

@@ -10,7 +10,8 @@ export const useWallpaperStore = defineStore('wallpaperStore', {
     }),
     getters: {
         getAll: state => state.wallpapers,
-        getWallpaperById: state => id => state.wallpapers.find(color => color.id === id),
+        getWallpaperById: state => id => state.wallpapers.find(wallpaper => wallpaper.id === id),
+        getPriceById: state => id => state.wallpapers.find(wallpaper => wallpaper.id === id),
         getPrice: state => state.wallpaper.price,
     },
     actions: {

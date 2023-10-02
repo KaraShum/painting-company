@@ -3,22 +3,22 @@ import {useColorStore} from "@/stores/colorStore";
 import {useWallpaperStore} from "@/stores/wallpaperStore";
 import {computed, ref, onMounted, defineProps} from "vue";
 import {calcWallpaperRolls} from "@/services/calculator";
-import ValueForm from "@/components/ValueForm.vue";
-import WallpaperForm from "@/components/WallpaperForm.vue";
-import PaintForm from "@/components/PaintForm.vue";
+import ShopCard from "@/components/ShopCard.vue";
+import Output from "@/services/output";
 
 const colorStore = useColorStore();
 const wallpaperStore = useWallpaperStore();
 
 const colors = computed(() => colorStore.colors);
 const colorPrice = computed(() => colorStore.colors.map(color => color.price));
+
+const wallpapers = computed(() => wallpaperStore.wallpapers);
+const selectedColor = ref(0);
+
 onMounted(() => {
   colorStore.fetchColors();
   wallpaperStore.fetchWallpapers();
 })
-
-const selectedColor = ref(0);
-console.log(wallpaperStore.getAll);
 
 function changeColor(event) {
   selectedColor.value = event.target.value;
@@ -36,6 +36,25 @@ function changeTab() {
     tab.value = 0;
   }
 }
+
+const count = ref(0);
+const price = ref(0);
+
+const width = ref(0);
+const height = ref(0);
+const selectedWallpaper = ref();
+
+let outputs = ref([]);
+function addToCart() {
+  count.value = calcWallpaperRolls(width.value, height.value, selectedWallpaper.value.rollLength, selectedWallpaper.value.rollWidth, 0);
+  price.value = selectedWallpaper.value.price * count.value;
+  const output = new Output(count.value, price.value, "Tapete");
+  outputs.value.push({
+    _count: output.count,
+    _price: output.price,
+    _type: output.type
+  });
+}
 </script>
 
 <template>
@@ -48,18 +67,68 @@ function changeTab() {
 
   <div class="flex flex-wrap bg-white pt-2">
     <h1 class="w-full text-3xl text-center font-bold text-gray-900">Materialkostenberechnung</h1>
-    <!--    <hr class="my-12 h-0.5 border-t-0 bg-neutral-100 opacity-100 dark:opacity-50"/>-->
+    <hr class="my-12 h-0.5 border-t-0 bg-neutral-100"/>
     <div class="w-1/2 ml-auto bg-transparent h-12">
-      <form class="w-full max-w-sm">
-        <h2 class="font-semibold">Wandmaße</h2>
-        <ValueForm/>
+      <form class="w-full align-content-center max-w-sm">
+        <h2 class="font-semibold mb-2.5">Wandmaße</h2>
+        <div class="md:flex md:items-center mb-6">
+          <div class="md:w-1/3">
+            <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="inline-full-name">
+              Höhe
+            </label>
+          </div>
+          <div class="md:w-2/3">
+            <input
+                v-model="height"
+                class="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-600"
+                id="inline-full-name" type="text">
+          </div>
+        </div>
+        <div class="md:flex md:items-center mb-6">
+          <div class="md:w-1/3">
+            <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="inline-password">
+              Breite
+            </label>
+          </div>
+
+          <div class="md:w-2/3">
+            <input
+                v-model="width"
+                class="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-600"
+                type="text">
+          </div>
+        </div>
         <div>
           <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="inline-password">
             Fenster/Tür
           </label>
           <input @click="checkBox = !checkBox" type="checkbox">
           <div v-if="checkBox">
-            <ValueForm/>
+            <div class="md:flex md:items-center mb-6">
+              <div class="md:w-1/3">
+                <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="inline-full-name">
+                  Höhe
+                </label>
+              </div>
+              <div class="md:w-2/3">
+                <input
+                    class="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-600"
+                    id="inline-full-name" type="text">
+              </div>
+            </div>
+            <div class="md:flex md:items-center mb-6">
+              <div class="md:w-1/3">
+                <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="inline-password">
+                  Breite
+                </label>
+              </div>
+
+              <div class="md:w-2/3">
+                <input
+                    class="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-600"
+                    type="text">
+              </div>
+            </div>
           </div>
         </div>
         <div class="md:flex md:items-center mb-6">
@@ -68,7 +137,7 @@ function changeTab() {
 
         <div class="sm:hidden">
           <select id="tabs"
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  class="active:g-gray-50 border active:border-gray-300 active:text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
             <option>Farbe</option>
             <option>Tapete</option>
           </select>
@@ -90,28 +159,42 @@ function changeTab() {
           </li>
         </ul>
         <div v-if="tab === 0">
-          <PaintForm/>
+          <div>
+            <select v-model="selectedColor">
+              <option v-for="color in colors" :key="color.id" :value="color.id">{{ color.name }} ({{
+                  color.price
+                }}€)
+              </option>
+            </select>
+          </div>
         </div>
         <div v-if="tab === 1">
-          <WallpaperForm/>
+          <div>
+            <select v-model="selectedWallpaper">
+              <option v-for="wallpaper in wallpapers" :key="wallpaper.id" :value="wallpaper">{{ wallpaper.name }}
+                ({{ wallpaper.price }}€)
+              </option>
+            </select>
+          </div>
         </div>
-
 
         <div class="md:flex md:items-center">
           <div class="md:w-1/3"></div>
           <div class="md:w-2/3">
             <button
                 class="shadow bg-blue-600 hover:bg-blue-500 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
-                type="button"
-                @click="addToCart">
-              Berechnen
+                type="submit"
+                @click.prevent="addToCart">
+              Hinzufügen
             </button>
           </div>
         </div>
       </form>
     </div>
     <div class="w-1/3 mr-auto bg-transparent h-12">
-      <p>HALLO HALLO</p>
+      <ShopCard
+        :outputs="outputs">
+      </ShopCard>
     </div>
   </div>
 </template>

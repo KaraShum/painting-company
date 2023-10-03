@@ -1,11 +1,21 @@
 class Output {
 
-    constructor(count, price, type) {
+    constructor(category, count, price, type, deepground) {
+        this._category = category;
         this._count = count;
         this._price = price;
         this._type = type;
+        this._deepground = deepground;
     }
 
+
+    get category() {
+        return this._category;
+    }
+
+    set category(value) {
+        this._category = value;
+    }
 
     get count() {
         return this._count;
@@ -29,6 +39,15 @@ class Output {
 
     set type(value) {
         this._type = value;
+    }
+
+
+    get deepground() {
+        return this._deepground;
+    }
+
+    set deepground(value) {
+        this._deepground = value;
     }
 }
 

@@ -1,8 +1,8 @@
 import {createRouter, createWebHistory} from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
+    linkActiveClass: 'active',
     routes: [
         {
             path: '/',
@@ -25,12 +25,29 @@ const router = createRouter({
             component: () => import('../components/ShopPage.vue')
         },
         {
+            path: '/company',
+            name: 'company',
+            component: () => import('../components/CompanyPage.vue'),
+            meta: { requiresAuth: true }
+        },
+        {
             // catch all other routes
             path: '/:pathMatch(.*)*',
             name: 'PageNotFound',
             component: () => import('../components/PageNotFound.vue')
         }
     ]
-})
+});
+
+// router.beforeEach(async (to) => {
+//     const publicPages = ['/login', '/register', '/shop'];
+//     const authRequired = !publicPages.includes(to.path);
+//     const authStore = useAuthStore();
+//
+//     if (authRequired && !authStore.user) {
+//         authStore.returnUrl = to.fullPath;
+//         return '/login';
+//     }
+// });
 
 export default router

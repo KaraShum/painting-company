@@ -1,39 +1,46 @@
 <script setup>
 import {useColorStore} from "@/stores/colorStore";
 import {useWallpaperStore} from "@/stores/wallpaperStore";
-import {computed, ref, onMounted, defineProps} from "vue";
-import {calcWallpaperRolls} from "@/services/calculator";
+import {computed, onMounted, ref} from "vue";
+import {calcDeepground, calcPaintBuckets, calcWallpaperRolls} from "@/services/calculator";
 import ShopCard from "@/components/ShopCard.vue";
 import Output from "@/services/output";
 
 const colorStore = useColorStore();
 const wallpaperStore = useWallpaperStore();
-
+const isActive = ref(false);
+const tab = ref(0);
 const colors = computed(() => colorStore.colors);
-const colorPrice = computed(() => colorStore.colors.map(color => color.price));
-
 const wallpapers = computed(() => wallpaperStore.wallpapers);
-const selectedColor = ref(0);
+const selectedColor = ref();
 
 onMounted(() => {
   colorStore.fetchColors();
   wallpaperStore.fetchWallpapers();
 })
 
+const validateNumber = (event, prop) => {
+  const value = event.target.value;
+  if (!/^\d*\.?\d*$/.test(value)) {
+    event.target.value = value.replace(/[^\d.]/g, '');
+  }
+}
+
 function changeColor(event) {
   selectedColor.value = event.target.value;
 }
 
-console.log(calcWallpaperRolls(5, 2.65, 10.05, 0.53, 0.72));
-
 const checkBox = ref(false);
-const tab = ref(0);
 
 function changeTab() {
   if (tab.value === 0) {
     tab.value = 1;
+    isActive.value = !isActive.value;
+    selectedColor.value = null;
   } else {
     tab.value = 0;
+    isActive.value = !isActive.value;
+    selectedWallpaper.value = null;
   }
 }
 
@@ -42,29 +49,52 @@ const price = ref(0);
 
 const width = ref(0);
 const height = ref(0);
-const selectedWallpaper = ref();
+const windowHeigth = ref(0);
+const windowWidth = ref(0);
+const selectedWallpaper = ref(null);
+const area = computed(() => width.value * height.value);
+const windowArea = computed(() => windowHeigth.value * windowWidth.value);
+const totalArea = computed(() => area.value - windowArea.value);
 
 let outputs = ref([]);
+
+const isDeepground = ref(false);
+
 function addToCart() {
-  count.value = calcWallpaperRolls(width.value, height.value, selectedWallpaper.value.rollLength, selectedWallpaper.value.rollWidth, 0);
-  price.value = selectedWallpaper.value.price * count.value;
-  const output = new Output(count.value, price.value, "Tapete");
+  const category = ref("");
+  const type = ref("");
+  const deepgroundPrice = ref(0);
+  console.log(selectedWallpaper.value);
+  if (selectedWallpaper.value !== null) {
+    if (isDeepground.value) {
+      deepgroundPrice.value = calcDeepground(width.value, height.value) * 2;
+    }
+    category.value = "Tapete";
+    type.value = selectedWallpaper.value.name;
+    count.value = calcWallpaperRolls(width.value, height.value, selectedWallpaper.value.rollLength, selectedWallpaper.value.rollWidth, selectedWallpaper.value.rapport);
+    price.value = selectedWallpaper.value.price * count.value;
+  } else {
+    if (isDeepground.value) {
+      deepgroundPrice.value = calcDeepground(width.value, height.value) * 2;
+    }
+    category.value = "Farbe";
+    type.value = selectedColor.value.name;
+    count.value = calcPaintBuckets(totalArea.value, selectedColor.value.areaPerContainer);
+    price.value = count.value * selectedColor.value.price
+  }
+
+  const output = new Output(category.value ,count.value, price.value, type.value);
   outputs.value.push({
+    _category: output.category,
     _count: output.count,
     _price: output.price,
-    _type: output.type
+    _type: output.type,
+    _deepgroundPrice: deepgroundPrice.value
   });
 }
 </script>
 
 <template>
-
-  <!-- Links: Eingabefelder -->
-
-
-  <!-- Rechts: Anzeige/Historie -->
-
-
   <div class="flex flex-wrap bg-white pt-2">
     <h1 class="w-full text-3xl text-center font-bold text-gray-900">Materialkostenberechnung</h1>
     <hr class="my-12 h-0.5 border-t-0 bg-neutral-100"/>
@@ -80,8 +110,11 @@ function addToCart() {
           <div class="md:w-2/3">
             <input
                 v-model="height"
+                @input="validateNumber($event, height)"
                 class="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-600"
-                id="inline-full-name" type="text">
+                id="height-input"
+                type="text"
+                placeholder="Höhe eingeben">
           </div>
         </div>
         <div class="md:flex md:items-center mb-6">
@@ -90,19 +123,21 @@ function addToCart() {
               Breite
             </label>
           </div>
-
           <div class="md:w-2/3">
             <input
                 v-model="width"
+                @input="validateNumber($event, width)"
                 class="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-600"
-                type="text">
+                id="width-input"
+                type="text"
+                placeholder="Breite eingeben">
           </div>
         </div>
         <div>
-          <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="inline-password">
+          <label class="text-gray-500 font-bold my-2 pr-4" for="window">
             Fenster/Tür
           </label>
-          <input @click="checkBox = !checkBox" type="checkbox">
+          <input @click="checkBox = !checkBox" type="checkbox" id="window">
           <div v-if="checkBox">
             <div class="md:flex md:items-center mb-6">
               <div class="md:w-1/3">
@@ -112,6 +147,8 @@ function addToCart() {
               </div>
               <div class="md:w-2/3">
                 <input
+                    v-model="windowHeigth"
+                    @input="validateNumber($event, height)"
                     class="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-600"
                     id="inline-full-name" type="text">
               </div>
@@ -125,6 +162,8 @@ function addToCart() {
 
               <div class="md:w-2/3">
                 <input
+                    v-model="windowWidth"
+                    @input="validateNumber($event, width)"
                     class="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-600"
                     type="text">
               </div>
@@ -146,6 +185,7 @@ function addToCart() {
           <li class="w-full">
             <button
                 @click.prevent="changeTab"
+                :disabled="!isActive"
                 class="inline-block w-full p-4 text-gray-900 bg-gray-100 rounded-l-lg focus:ring-4 focus:ring-blue-300 active focus:outline-none"
                 aria-current="page">Farbe
             </button>
@@ -153,7 +193,8 @@ function addToCart() {
           <li class="w-full">
             <button
                 @click.prevent="changeTab"
-                class="inline-block w-full p-4 bg-white rounded-r-lg hover:text-gray-700 hover:bg-gray-50 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:hover:text-white">
+                :disabled="isActive"
+                class="inline-block w-full p-4 text-gray-900 bg-gray-100 rounded-r-lg focus:ring-4 focus:ring-blue-300 active focus:outline-none">
               Tapete
             </button>
           </li>
@@ -161,11 +202,13 @@ function addToCart() {
         <div v-if="tab === 0">
           <div>
             <select v-model="selectedColor">
-              <option v-for="color in colors" :key="color.id" :value="color.id">{{ color.name }} ({{
+              <option v-for="color in colors" :key="color.id" :value="color">{{ color.name }} ({{
                   color.price
                 }}€)
               </option>
             </select>
+            <label for="deepGround">Tiefgrund hinzufügen</label>
+            <input @click="isDeepground = !isDeepground" type="checkbox" id="deepGround">
           </div>
         </div>
         <div v-if="tab === 1">
@@ -175,9 +218,10 @@ function addToCart() {
                 ({{ wallpaper.price }}€)
               </option>
             </select>
+            <label for="deepGround">Tiefgrund hinzufügen</label>
+            <input @click="isDeepground = !isDeepground" type="checkbox" id="deepGround">
           </div>
         </div>
-
         <div class="md:flex md:items-center">
           <div class="md:w-1/3"></div>
           <div class="md:w-2/3">
@@ -193,7 +237,7 @@ function addToCart() {
     </div>
     <div class="w-1/3 mr-auto bg-transparent h-12">
       <ShopCard
-        :outputs="outputs">
+          :outputs="outputs">
       </ShopCard>
     </div>
   </div>

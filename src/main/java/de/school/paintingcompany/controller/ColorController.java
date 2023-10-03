@@ -2,7 +2,6 @@ package de.school.paintingcompany.controller;
 
 import de.school.paintingcompany.entities.Color;
 import de.school.paintingcompany.entities.ColorRepository;
-import de.school.paintingcompany.services.Calculator;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

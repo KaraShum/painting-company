@@ -3,14 +3,23 @@ package de.school.paintingcompany.entities;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import lombok.*;
 
 import java.util.Objects;
 
+import static jakarta.persistence.GenerationType.IDENTITY;
+
+@Data
+@Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Color {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     private String color;
@@ -19,62 +28,11 @@ public class Color {
     private double containerSize;
     private double areaPerContainer;
 
-    public Color() {
-    }
-
     public Color(String color, String name, double price, double containerSize, double areaPerContainer) {
         this.color = color;
         this.name = name;
         this.price = price;
         this.containerSize = containerSize;
-        this.areaPerContainer = areaPerContainer;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public double getContainerSize() {
-        return containerSize;
-    }
-
-    public void setContainerSize(double containerSize) {
-        this.containerSize = containerSize;
-    }
-
-    public double getAreaPerContainer() {
-        return areaPerContainer;
-    }
-
-    public void setAreaPerContainer(double areaPerContainer) {
         this.areaPerContainer = areaPerContainer;
     }
 

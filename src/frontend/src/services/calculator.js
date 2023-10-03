@@ -36,8 +36,8 @@ function calcWallpaperRolls(wallWidth, wallHeight, wallpaperLength, wallpaperWid
     return Math.ceil(lanes / lPR);
 }
 
-function calcPrice(count, price) {
-    return count * price;
+function calcDeepground(width, height) {
+    return Math.ceil((width * height) / 75);
 }
 
-export { calcArea, calcTotalArea, calcPaintBuckets, calcLanes, calcLangeLength, lanesPerRoll, calcWallpaperRolls, calcPrice };
+export { calcArea, calcDeepground, calcLanes, calcLangeLength, calcPaintBuckets, calcTotalArea, calcWallpaperRolls, lanesPerRoll };

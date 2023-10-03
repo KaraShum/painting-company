@@ -3,7 +3,7 @@ import axios from 'axios'
 
 export const useWallpaperStore = defineStore('wallpaperStore', {
     state: () => ({
-        wallpaper: [],
+        wallpapers: [],
         color: null,
         loading: false,
         error: null
